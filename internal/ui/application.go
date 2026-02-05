@@ -8,6 +8,7 @@ import (
 )
 
 type Application struct {
+	// Global state for visited hosts and endpoints
 	visitedHosts map[string]*model.Host
 
 	// Application components
@@ -20,6 +21,7 @@ type Application struct {
 	messagesSection  *tview.TextView
 }
 
+// Creates and returns a new *tview.Application with all its components initialized
 func NewApplication() *Application {
 	// Initialize variables
 	app := Application{}
@@ -38,6 +40,7 @@ func NewApplication() *Application {
 	return &app
 }
 
+// Initializes the main TUI
 func (app *Application) Run() {
 	// Run tview.Application
 	if err := app.tui.Run(); err != nil {
@@ -45,10 +48,11 @@ func (app *Application) Run() {
 	}
 }
 
+// Creates the TUI components and state variables of the application
 func (app *Application) initUIComponents() {
-	// Create sections for the UI
+	// Create sections for the TUI
 	app.hostsSection = tview.NewList()
-	app.hostsSection.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune){
+	app.hostsSection.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
 		app.hostChanged(mainText)
 	})
 
@@ -57,18 +61,16 @@ func (app *Application) initUIComponents() {
 	app.detailsSection = tview.NewTextView()
 	app.detailsSection.SetText("Write a host address and hit enter to begin")
 
-	app.searchBarSection = tview.NewInputField().SetFieldWidth(0)
-	app.searchBarSection.SetDoneFunc(func(key tcell.Key) {
-		switch key {
-		case tcell.KeyEnter:
-			app.searchHost()
-		}
-	})
+	app.searchBarSection = tview.NewInputField()
+	app.searchBarSection.SetFieldWidth(30).
+		SetFieldBackgroundColor(tcell.Color63).
+		SetPlaceholder("www.example.com")
 
 	app.messagesSection = tview.NewTextView()
 	app.messagesSection.SetText("API Ready")
 }
 
+// Shorthand for updating the TUI inside a goroutine via tview.Application.QueueUpdateDraw() function
 func (app *Application) queueUpdateDraw(function func()) {
 	go func() {
 		app.tui.QueueUpdateDraw(function)

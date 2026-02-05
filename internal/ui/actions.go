@@ -6,30 +6,27 @@ import (
 	"tls-checker/internal/api"
 )
 
-func (app *Application) searchHost() {
+// Call api.analyzeHost(host) with the given host name and add it to []visitedHosts if it was not present. Call app.hostChanged(host) at the end.
+func (app *Application) searchHost(host string) {
 	// TODO: Block the execution of another coroutine until the previous one finishes
-	host := app.searchBarSection.GetText()
 	go func() {
 		if _, exists := app.visitedHosts[host]; !exists {
+			app.searchBarSection.SetDisabled(true)
 			res, err := api.AnalyzeHost(host)
 			if err != nil {
 				panic(err)
 			} else {
 				// Add host to visited hosts
 				app.visitedHosts[host] = res
-				// Re-draw hosts
-				app.tui.QueueUpdateDraw(func() {
-					app.hostsSection.Clear()
-					for key := range app.visitedHosts {
-						app.hostsSection.AddItem(key, "", 0, nil)
-					}
-				})
+				app.hostsSection.AddItem(host, "", 0, nil)
 			}
 		}
+		app.searchBarSection.SetDisabled(false)
 		app.hostChanged(host)
 	}()
 }
 
+// Change the contents of endpointsSection and detailsSection when adding/navigating to another host in the list
 func (app *Application) hostChanged(host string) {
 	app.tui.SetFocus(app.hostsSection)
 	app.queueUpdateDraw(func() {
@@ -53,6 +50,7 @@ func (app *Application) hostChanged(host string) {
 	})
 }
 
+// TODO
 func (app *Application) endpointChanged() {
 
 }

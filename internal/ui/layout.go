@@ -5,6 +5,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// Builds the layout of the app by its sections
 func (app *Application) buildLayout() {
 	// Frames for headers and shortcuts guide
 	hostsFrame := tview.NewFrame(app.hostsSection)
@@ -27,7 +28,7 @@ func (app *Application) buildLayout() {
 		SetBorders(0, 0, 1, 0, 1, 1).
 		SetBorder(true)
 
-	// Build layout
+	// Arrange frames into the final layout
 	hostsAndEndpointLayout := tview.NewFlex().
 		SetDirection(tview.FlexColumnCSS).
 		AddItem(hostsFrame, 0, 1, false).
@@ -40,13 +41,14 @@ func (app *Application) buildLayout() {
 
 	infoAndSearchHostLayout := tview.NewFlex().
 		SetDirection(tview.FlexColumnCSS).
-		AddItem(firstColumnAndDetailsLayout, 0, 10, false).
-		AddItem(searchBarFrame, 0, 2, true).
+		AddItem(firstColumnAndDetailsLayout, 0, 20, false).
+		AddItem(searchBarFrame, 0, 4, true).
 		AddItem(app.messagesSection.SetTextAlign(tview.AlignCenter), 0, 1, false)
 
-	// Set the final layout
+	// Main frame containing all the sections
 	mainFrame := tview.NewFrame(infoAndSearchHostLayout).SetBorders(1, 0, 0, 0, 0, 0)
 	mainFrame.AddText("TLS Checker - SSL Labs Api v2", true, tview.AlignCenter, tcell.Color63)
+
 
 	// Set up final layout in main app
 	app.pages = tview.NewPages().AddPage("main", mainFrame, true, true)
