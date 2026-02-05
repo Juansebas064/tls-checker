@@ -1,8 +1,10 @@
 package ui
 
 import (
-	"github.com/rivo/tview"
 	"tls-checker/internal/model"
+
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 type Application struct {
@@ -46,21 +48,29 @@ func (app *Application) Run() {
 func (app *Application) initUIComponents() {
 	// Create sections for the UI
 	app.hostsSection = tview.NewList()
+	app.hostsSection.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune){
+		app.hostChanged(mainText)
+	})
 
 	app.endpointsSection = tview.NewList()
-	app.endpointsSection.SetBorder(true)
 
 	app.detailsSection = tview.NewTextView()
-	app.detailsSection.SetBorder(true)
 	app.detailsSection.SetText("Write a host address and hit enter to begin")
 
 	app.searchBarSection = tview.NewInputField().SetFieldWidth(0)
-	app.searchBarSection.SetBorder(true).SetTitle("Search")
-	// SetDoneFunc(func(key tcell.Key) {
-	// 	switch key {
-	// 	case tcell.KeyEnter:
-	// 		host := app.searchBarSection.GetText()
-	// 		AnalyzeHost(host)
-	// 	}
-	// })
+	app.searchBarSection.SetDoneFunc(func(key tcell.Key) {
+		switch key {
+		case tcell.KeyEnter:
+			app.searchHost()
+		}
+	})
+
+	app.messagesSection = tview.NewTextView()
+	app.messagesSection.SetText("API Ready")
+}
+
+func (app *Application) queueUpdateDraw(function func()) {
+	go func() {
+		app.tui.QueueUpdateDraw(function)
+	}()
 }
