@@ -14,7 +14,7 @@ func (app *Application) setKeyboardShortcuts() {
 		case rune(tcell.KeyCtrlD):
 			app.tui.SetFocus(app.detailsSection)
 		case rune(tcell.KeyCtrlS):
-			app.tui.SetFocus(app.searchBarSection)
+			app.tui.SetFocus(app.searchSection)
 
 		// Exit the app
 		case rune(tcell.KeyCtrlQ):
@@ -24,10 +24,14 @@ func (app *Application) setKeyboardShortcuts() {
 	})
 
 	// Section-related keybinds
-	app.searchBarSection.SetDoneFunc(func(key tcell.Key) {
-		switch key {
-		case tcell.KeyEnter:
-			app.searchHost(app.searchBarSection.GetText())
+	app.startNewCheck.SetChangedFunc(func (isChecked bool) {
+		if isChecked {
+			app.fromCacheCheck.SetChecked(false)
+		}
+	})
+	app.fromCacheCheck.SetChangedFunc(func (isChecked bool) {
+		if isChecked {
+			app.startNewCheck.SetChecked(false)
 		}
 	})
 }

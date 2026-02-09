@@ -3,26 +3,47 @@ package ui
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 	"tls-checker/internal/api"
+	"tls-checker/internal/model"
 )
 
 // Call api.analyzeHost(host) with the given host name and add it to []visitedHosts if it was not present. Call app.hostChanged(host) at the end.
 func (app *Application) searchHost(host string) {
-	// TODO: Block the execution of another coroutine until the previous one finishes
 	go func() {
 		if _, exists := app.visitedHosts[host]; !exists {
-			app.searchBarSection.SetDisabled(true)
-			res, err := api.AnalyzeHost(host)
-			if err != nil {
-				panic(err)
-			} else {
-				// Add host to visited hosts
-				app.visitedHosts[host] = res
-				app.hostsSection.AddItem(host, "", 0, nil)
+			var (
+				res *model.Host
+				err error
+				i   int = 0
+			)
+			for {
+				if res != nil {
+					res, err = api.AnalyzeHost(app.getAnalyzeHostQuery(true))	// Check status of running req
+					app.showMessage(fmt.Sprintf("Retrying for %d time, status: %s", i, res.Status), "text")
+				} else {
+					res, err = api.AnalyzeHost(app.getAnalyzeHostQuery(false))
+					app.showMessage("Starting API request", "text")
+				}
+
+				if err != nil {
+					app.showMessage(err.Error(), "error")
+					break
+				} else {
+					if res.Status != "READY" {
+						time.Sleep(5 * time.Second)
+					} else {
+						// Add host to visited hosts
+						app.visitedHosts[host] = res
+						app.hostsSection.AddItem(host, "", 0, nil)
+						app.showMessage("API request completed", "text")
+						app.hostChanged(host)
+						break
+					}
+				}
+				i++
 			}
 		}
-		app.searchBarSection.SetDisabled(false)
-		app.hostChanged(host)
 	}()
 }
 
@@ -33,16 +54,14 @@ func (app *Application) hostChanged(host string) {
 
 		// Set host on focus
 		if indexSlice := app.hostsSection.FindItems(host, "", false, false); len(indexSlice) > 0 {
-			app.messagesSection.Clear()
-			app.messagesSection.SetText(fmt.Sprintf("Current host: %v", host))
 			app.hostsSection.SetCurrentItem(indexSlice[0])
 		}
 
 		// Show endpoints of the host
-		app.endpointsSection.Clear()
-		for _, endpoint := range app.visitedHosts[host].Endpoints {
-			app.endpointsSection.AddItem(endpoint.IpAddress, "", 0, nil)
-		}
+		// app.endpointsSection.Clear()
+		// for _, endpoint := range app.visitedHosts[host].Endpoints {
+		// 	app.endpointsSection.AddItem(endpoint.IpAddress, "", 0, nil)
+		// }
 
 		// Show details of the host
 		text, _ := json.MarshalIndent(app.visitedHosts[host], "", "\t")
