@@ -28,30 +28,24 @@ func (app *Application) setKeyboardShortcuts() {
 	app.detailsSection.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
 		case 'n':
-			// TODO: Next endpoint
+			// Next endpoint
+			selectedItemIndex := app.endpointsSection.GetCurrentItem()
+			if selectedItemIndex == (app.endpointsSection.GetItemCount() - 1) {
+				app.endpointChanged(0)
+			} else {
+				app.endpointChanged(selectedItemIndex + 1)
+			}
+			app.tui.SetFocus(app.detailsSection)
+		case 'p':
+			// Previous endpoint
+			selectedItemIndex := app.endpointsSection.GetCurrentItem()
+			if selectedItemIndex == 0 {
+				app.endpointChanged(app.endpointsSection.GetItemCount() - 1)
+			} else {
+				app.endpointChanged(selectedItemIndex - 1)
+			}
+			app.tui.SetFocus(app.detailsSection)
 		}
 		return event
-	})
-
-	// Function assignment to components
-	// Hosts
-	app.hostsSection.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
-		app.hostChanged(mainText)
-	})
-	// Search
-	app.searchSection.GetButton(0).SetSelectedFunc(func () {
-		app.searchHost(app.hostField.GetText())
-	})
-	app.startNewCheck.SetChangedFunc(func (isChecked bool) {
-		if isChecked {
-			app.fromCacheCheck.SetChecked(false)
-			app.maxAgeField.SetDisabled(true)
-		}
-	})
-	app.fromCacheCheck.SetChangedFunc(func (isChecked bool) {
-		if isChecked {
-			app.startNewCheck.SetChecked(false)
-			app.maxAgeField.SetDisabled(false)
-		}
 	})
 }
