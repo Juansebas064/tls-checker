@@ -69,9 +69,6 @@ func (app *Application) initUIComponents() {
 	// Create sections for the TUI
 	// Host list
 	app.hostsSection = tview.NewList().ShowSecondaryText(false)
-	app.hostsSection.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
-		app.hostChanged(mainText)
-	})
 
 	// Endpoints section
 	app.endpointsSection = tview.NewList().ShowSecondaryText(false)
@@ -80,6 +77,7 @@ func (app *Application) initUIComponents() {
 	app.detailsSection = tview.NewTextView()
 	app.detailsSection.SetText("Write a host address and hit send to begin")
 
+	// Search section
 	// Input for host
 	app.hostField = tview.NewInputField().
 		SetFieldWidth(25).
@@ -87,9 +85,9 @@ func (app *Application) initUIComponents() {
 		SetPlaceholderStyle(tcell.StyleDefault.Background(colors["primary"]).Dim(true))
 
 	// Flags
-	app.startNewCheck = tview.NewCheckbox().SetLabel("Start new").SetChecked(true)
+	app.startNewCheck = tview.NewCheckbox().SetLabel("Start new")
 	app.publishCheck = tview.NewCheckbox().SetLabel("Publish")
-	app.fromCacheCheck = tview.NewCheckbox().SetLabel("From cache")
+	app.fromCacheCheck = tview.NewCheckbox().SetLabel("From cache").SetChecked(true)
 	app.maxAgeField = tview.NewInputField().
 		SetLabel("Max age").
 		SetFieldWidth(4).
@@ -105,7 +103,7 @@ func (app *Application) initUIComponents() {
 		AddFormItem(app.fromCacheCheck).
 		AddFormItem(app.maxAgeField).
 		AddFormItem(app.ignoreMismatchCheck).
-		AddButton("Send", func() { app.searchHost(app.hostField.GetText()) }).
+		AddButton("Send", nil).
 		SetHorizontal(true).
 		SetFieldStyle(tcell.StyleDefault.Background(colors["primary"])).
 		SetItemPadding(2).
@@ -132,6 +130,7 @@ func (app *Application) showMessage(message string, status string) {
 	})
 }
 
+// Build the request with the host address and flags
 func (app *Application) getAnalyzeHostQuery(checkRequestStatus bool) *model.AnalyzeHostQuery {
 	var (
 		getStatus = func(isChecked bool) string {
