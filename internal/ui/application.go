@@ -7,6 +7,14 @@ import (
 )
 
 // Constants
+const (
+	colorPrimary = "primary"
+	colorText    = "text"
+	colorOk      = "ok"
+	colorWarning = "warning"
+	colorError   = "error"
+)
+
 var colors = map[string]tcell.Color{
 	"primary": tcell.Color63,
 	"text":    tcell.ColorWhite,
@@ -17,7 +25,7 @@ var colors = map[string]tcell.Color{
 
 type Application struct {
 	// Global state for visited hosts and endpoints
-	visitedHosts map[string]*model.Host
+	visitedHosts []*model.Host
 
 	// Application components
 	tui              *tview.Application
@@ -25,6 +33,7 @@ type Application struct {
 	hostsSection     *tview.List
 	endpointsSection *tview.List
 	detailsSection   *tview.TextView
+	summarySection   *tview.TextView
 	searchSection    *tview.Form
 	messagesSection  *tview.TextView
 
@@ -42,9 +51,9 @@ func NewApplication() *Application {
 	// Initialize variables
 	app := Application{}
 	app.tui = tview.NewApplication()
-	app.visitedHosts = make(map[string]*model.Host)
+	app.visitedHosts = make([]*model.Host, 0)
 
-	// Make the UI components
+	// Make the TUI components
 	app.initUIComponents()
 
 	// Build the layout
@@ -52,6 +61,9 @@ func NewApplication() *Application {
 
 	// Set keyboard shortcuts
 	app.setKeyboardShortcuts()
+
+	// Set events for the TUI components
+	app.setEvents()
 
 	return &app
 }
@@ -82,7 +94,7 @@ func (app *Application) initUIComponents() {
 	app.hostField = tview.NewInputField().
 		SetFieldWidth(25).
 		SetPlaceholder("www.example.com").
-		SetPlaceholderStyle(tcell.StyleDefault.Background(colors["primary"]).Dim(true))
+		SetPlaceholderStyle(tcell.StyleDefault.Background(colors[colorPrimary]).Dim(true))
 
 	// Flags
 	app.startNewCheck = tview.NewCheckbox().SetLabel("Start new")
@@ -92,7 +104,7 @@ func (app *Application) initUIComponents() {
 		SetLabel("Max age").
 		SetFieldWidth(4).
 		SetPlaceholder("0").
-		SetPlaceholderStyle(tcell.StyleDefault.Background(colors["primary"]).Dim(true))
+		SetPlaceholderStyle(tcell.StyleDefault.Background(colors[colorPrimary]).Dim(true))
 	app.ignoreMismatchCheck = tview.NewCheckbox().SetLabel("Ignore mismatch")
 
 	// Search form
@@ -105,9 +117,9 @@ func (app *Application) initUIComponents() {
 		AddFormItem(app.ignoreMismatchCheck).
 		AddButton("Send", nil).
 		SetHorizontal(true).
-		SetFieldStyle(tcell.StyleDefault.Background(colors["primary"])).
+		SetFieldStyle(tcell.StyleDefault.Background(colors[colorPrimary])).
 		SetItemPadding(2).
-		SetBorderPadding(0,0,0,0)
+		SetBorderPadding(0, 0, 0, 0)
 
 	// Messages section
 	app.messagesSection = tview.NewTextView()
@@ -122,10 +134,10 @@ func (app *Application) queueUpdateDraw(function func()) {
 }
 
 // Show messages to the user
-func (app *Application) showMessage(message string, status string) {
+func (app *Application) showMessage(message string, colorStatus string) {
 	app.queueUpdateDraw(func() {
 		app.messagesSection.Clear()
-		app.messagesSection.SetTextColor(colors[status])
+		app.messagesSection.SetTextColor(colors[colorStatus])
 		app.messagesSection.SetText(message)
 	})
 }

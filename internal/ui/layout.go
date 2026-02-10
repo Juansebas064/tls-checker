@@ -1,30 +1,38 @@
 package ui
 
 import (
+	"fmt"
+
 	"github.com/rivo/tview"
 )
 
 // Builds the layout of the app by its sections
 func (app *Application) buildLayout() {
+
 	// Frames for headers and shortcuts guide
-
+	// Hosts
 	hostsFrame := tview.NewFrame(app.hostsSection)
-	hostsFrame.AddText("Hosts [Ctrl + h]", true, tview.AlignLeft, colors["primary"]).
+	hostsFrame.AddText("Hosts (Ctrl + h)", true, tview.AlignLeft, colors[colorPrimary]).
 		SetBorders(0, 0, 1, 0, 1, 1).
 		SetBorder(true)
-
+		
+	// Endpoints
 	endpointsFrame := tview.NewFrame(app.endpointsSection)
-	endpointsFrame.AddText("Endpoints [Ctrl + e]", true, tview.AlignLeft, colors["primary"]).
+	endpointsFrame.AddText("Endpoints (Ctrl + e)", true, tview.AlignLeft, colors[colorPrimary]).
 		SetBorders(0, 0, 1, 0, 1, 1).
 		SetBorder(true)
 
+	// Details
 	detailsFrame := tview.NewFrame(app.detailsSection)
-	detailsFrame.AddText("Details [Ctrl + d]", true, tview.AlignCenter, colors["primary"]).
+	detailsFrame.AddText("Details (Ctrl + d)", true, tview.AlignCenter, colors[colorPrimary]).
+	AddText(fmt.Sprintln("Previous (p)"), false, tview.AlignLeft, colors[colorText]).
+	AddText(fmt.Sprintln("Next (n)"), false, tview.AlignRight, colors[colorText]).
 		SetBorders(0, 0, 1, 0, 1, 1).
 		SetBorder(true)
 
+	// Search
 	searchBarFrame := tview.NewFrame(app.searchSection)
-	searchBarFrame.AddText("Search [Ctrl + s]", true, tview.AlignCenter, colors["primary"]).
+	searchBarFrame.AddText("Search (Ctrl + s)", true, tview.AlignCenter, colors[colorPrimary]).
 		SetBorders(0, 0, 1, 0, 1, 1).
 		SetBorder(true)
 
@@ -47,8 +55,8 @@ func (app *Application) buildLayout() {
 
 	// Main frame containing all the sections
 	mainFrame := tview.NewFrame(infoAndSearchHostLayout).SetBorders(1, 0, 0, 0, 0, 0)
-	mainFrame.AddText("TLS Checker - SSL Labs Api v2", true, tview.AlignCenter, colors["primary"])
-	mainFrame.AddText(" Exit [Ctrl + q]", true, tview.AlignLeft, colors["text"])
+	mainFrame.AddText("TLS Checker - SSL Labs Api v2", true, tview.AlignCenter, colors[colorText])
+	mainFrame.AddText(" Exit (Ctrl + q)", true, tview.AlignLeft, colors[colorText])
 
 	// Set up final layout in main app
 	app.pages = tview.NewPages().AddPage("main", mainFrame, true, true)
