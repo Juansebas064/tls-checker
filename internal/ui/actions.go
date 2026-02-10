@@ -5,19 +5,22 @@ import (
 	"fmt"
 	"time"
 	"tls-checker/internal/api"
-	// "tls-checker/internal/model"
 )
 
-// Call api.analyzeHost(analyzeHostQuery) with the given host name and add it to []visitedHosts if it was not present. Call app.hostChanged(host) at the end.
+// Call api.analyzeHost(analyzeHostQuery) with the given host name and add it to []visitedHosts if it was not present. Call app.hostChanged(hostIndex) at the end.
 func (app *Application) searchHost(host string) {
 	go func() {
-		if _, exists := app.visitedHosts[host]; !exists {
+		// Evaluate if the host is already visited
+		var indexSlice = app.hostsSection.FindItems(host, "", false, true)
+		if len(indexSlice) > 0 {
+			app.hostChanged(indexSlice[0])
+		} else {
 			// Make the request
-			app.showMessage("Starting API request", "text")
+			app.showMessage("Starting API request", colorText)
 			res, err := api.AnalyzeHost(app.getAnalyzeHostQuery(false))
 
 			if err != nil {
-				app.showMessage(err.Error(), "error")
+				app.showMessage(err.Error(), colorError)
 				return
 			}
 
@@ -33,50 +36,52 @@ func (app *Application) searchHost(host string) {
 				app.showMessage(fmt.Sprintf("Retrying for %d time, status: %s", i, res.Status), "text")
 
 				if err != nil {
-					app.showMessage(err.Error(), "error")
+					app.showMessage(err.Error(), colorError)
 					return
 				}
 			}
 
 			// Add host to visited hosts
-			app.visitedHosts[host] = res
+			app.visitedHosts = append(app.visitedHosts, res)
 			app.hostsSection.AddItem(host, "", 0, nil)
-			app.showMessage("API request completed", "text")
-			app.hostChanged(host)
-		} else {
-			app.hostChanged(host)
+			app.showMessage("API request completed", colorText)
+			app.hostChanged(len(app.visitedHosts) - 1)
 		}
 	}()
 }
 
-// Change the contents of endpointsSection and detailsSection when adding/navigating to another host in the list
-func (app *Application) hostChanged(host string) {
-	app.tui.SetFocus(app.hostsSection)
+// Change focus and the contents of endpointsSection when adding/navigating to another host in the list
+func (app *Application) hostChanged(hostIndex int) {
+	app.showMessage(fmt.Sprintf("Showing data from host \"%s\"", app.visitedHosts[hostIndex].Host), colorText)
 
 	// TODO: If host isn't already in focus
-
 	// if hostAlreadyOnFocus := app.hostsSection.
 
 	app.queueUpdateDraw(func() {
 
 		// Set host on focus
-		if indexSlice := app.hostsSection.FindItems(host, "", false, false); len(indexSlice) > 0 {
-			app.hostsSection.SetCurrentItem(indexSlice[0])
-		}
+		app.hostsSection.SetCurrentItem(hostIndex)
 
 		// Show endpoints of the host
-		// app.endpointsSection.Clear()
-		// for _, endpoint := range app.visitedHosts[host].Endpoints {
-		// 	app.endpointsSection.AddItem(endpoint.IpAddress, "", 0, nil)
-		// }
+		app.endpointsSection.Clear()
+		for _, endpoint := range app.visitedHosts[hostIndex].Endpoints {
+			app.endpointsSection.AddItem(endpoint.IPAddress, "", 0, nil)
+		}
 
-		// Show details of the host
-		text, _ := json.MarshalIndent(app.visitedHosts[host], "", "\t")
-		app.detailsSection.SetText(string(text))
+		// Show details of the endpoint
+		app.tui.SetFocus(app.detailsSection)
+		app.endpointChanged(0)
 	})
 }
 
-// TODO
-func (app *Application) endpointChanged() {
-
+// Change focus and the contents of detailsSection when adding/navigating to another endpoint in the list
+func (app *Application) endpointChanged(endpointIndex int) {
+	//
+	hostIndex := app.hostsSection.GetCurrentItem()
+	text, _ := json.MarshalIndent(app.visitedHosts[hostIndex].Endpoints[endpointIndex], "", "\t")
+	app.queueUpdateDraw(func() {
+		app.endpointsSection.SetCurrentItem(endpointIndex)
+		app.detailsSection.ScrollToBeginning()
+		app.detailsSection.SetText(string(text))
+	})
 }
