@@ -7,7 +7,11 @@ func (app *Application) setEvents() {
 		app.hostChanged(index)
 	})
 	app.hostsSection.SetSelectedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
-		app.tui.SetFocus(app.detailsSection)
+		if len(app.visitedHosts[index].Endpoints) == 1 {
+			app.tui.SetFocus(app.detailsSection)
+		} else {
+			app.tui.SetFocus(app.endpointsSection)
+		}
 	})
 	//Endpoints
 	app.endpointsSection.SetChangedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
@@ -21,12 +25,14 @@ func (app *Application) setEvents() {
 		app.searchHost(app.hostField.GetText())
 	})
 	app.startNewCheck.SetChangedFunc(func(isChecked bool) {
+		// TODO: Fix focusing another element when changed
 		if isChecked {
 			app.fromCacheCheck.SetChecked(false)
 			app.maxAgeField.SetDisabled(true)
 		}
 	})
 	app.fromCacheCheck.SetChangedFunc(func(isChecked bool) {
+		// TODO: Fix focusing another element when changed
 		if isChecked {
 			app.startNewCheck.SetChecked(false)
 			app.maxAgeField.SetDisabled(false)

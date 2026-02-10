@@ -22,6 +22,7 @@ func (e ServiceError) Error() string {
 	return fmt.Sprintf("Code %d: %s", e.Code, e.Message)
 }
 
+// Make the API call to SSLLabs to retrieve host information
 func AnalyzeHost(query *model.AnalyzeHostQuery) (*model.Host, error) {
 	// Query parameters to make HTTP request
 	params := url.Values{}
@@ -33,6 +34,7 @@ func AnalyzeHost(query *model.AnalyzeHostQuery) (*model.Host, error) {
 	params.Add("all", query.All)
 	params.Add("ignoreMismatch", query.IgnoreMismatch)
 
+	// Build the string request
 	req := fmt.Sprintf("%v/analyze?%v", SSLLabsApi, params.Encode())
 
 	res, err := http.Get(req)
@@ -45,6 +47,7 @@ func AnalyzeHost(query *model.AnalyzeHostQuery) (*model.Host, error) {
 		return nil, err
 	}
 
+	// Return an error if the request was successful but the response was an error
 	if res.StatusCode != 200 {
 		myerr := ServiceError{
 			Code:    res.StatusCode,
@@ -59,22 +62,3 @@ func AnalyzeHost(query *model.AnalyzeHostQuery) (*model.Host, error) {
 	json.Unmarshal(body, &host)
 	return &host, nil
 }
-
-// func GetEndpointData(hostAdress string, ipAddress string) (*model.Endpoint, error) {
-// 	query := fmt.Sprintf("%v/getEndpointData?host=%v&s=%v", SSLLABS_API, hostAdress, ipAddress)
-
-// 	response, error := http.Get(query)
-// 	if error != nil {
-// 		return nil, error
-// 	}
-
-// 	body, error := io.ReadAll(response.Body)
-// 	if error != nil {
-// 		return nil, error
-// 	}
-// 	defer response.Body.Close()
-
-// 	var host model.Endpoint
-// 	json.Unmarshal(body, &host)
-// 	return &host, nil
-// }

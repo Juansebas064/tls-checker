@@ -25,6 +25,7 @@ func (app *Application) searchHost(host string) {
 			}
 
 			// Keep checking until status is ready
+			// TODO: Move retrying logic to client.analyzeHost
 			for i := 1; ; i++ {
 				if res.Status == "READY" {
 					break
@@ -47,6 +48,7 @@ func (app *Application) searchHost(host string) {
 			app.showMessage("API request completed", colorText)
 			app.hostChanged(len(app.visitedHosts) - 1)
 		}
+		app.tui.SetFocus(app.detailsSection)
 	}()
 }
 
@@ -54,7 +56,7 @@ func (app *Application) searchHost(host string) {
 func (app *Application) hostChanged(hostIndex int) {
 	app.showMessage(fmt.Sprintf("Showing data from host \"%s\"", app.visitedHosts[hostIndex].Host), colorText)
 
-	// TODO: If host isn't already in focus
+	// TODO: Verify if host isn't already in focus
 	// if hostAlreadyOnFocus := app.hostsSection.
 
 	app.queueUpdateDraw(func() {
@@ -69,16 +71,17 @@ func (app *Application) hostChanged(hostIndex int) {
 		}
 
 		// Show details of the endpoint
-		app.tui.SetFocus(app.detailsSection)
 		app.endpointChanged(0)
 	})
 }
 
 // Change focus and the contents of detailsSection when adding/navigating to another endpoint in the list
 func (app *Application) endpointChanged(endpointIndex int) {
-	//
+	// Identify active host
 	hostIndex := app.hostsSection.GetCurrentItem()
 	text, _ := json.MarshalIndent(app.visitedHosts[hostIndex].Endpoints[endpointIndex], "", "\t")
+
+	// Draw new endpoint details
 	app.queueUpdateDraw(func() {
 		app.endpointsSection.SetCurrentItem(endpointIndex)
 		app.detailsSection.ScrollToBeginning()
