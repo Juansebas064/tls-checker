@@ -1,79 +1,79 @@
 package model
 
 type Endpoint struct {
-	IPAddress         string         `json:"ipAddress"`
-	StatusMessage     string         `json:"statusMessage"`
-	Grade             string         `json:"grade"`
-	GradeTrustIgnored string         `json:"gradeTrustIgnored"`
-	HasWarnings       bool           `json:"hasWarnings"`
-	IsExceptional     bool           `json:"isExceptional"`
-	Progress          int            `json:"progress"`
-	Duration          int            `json:"duration"`
-	ETA               int            `json:"eta"`
-	Delegation        int            `json:"delegation"`
-	Details           EndpointDetail `json:"details"`
+	IPAddress         string  `json:"ipAddress"`
+	StatusMessage     string  `json:"statusMessage"`
+	Grade             string  `json:"grade"`
+	GradeTrustIgnored string  `json:"gradeTrustIgnored"`
+	HasWarnings       bool    `json:"hasWarnings"`
+	IsExceptional     bool    `json:"isExceptional"`
+	Progress          int     `json:"progress"`
+	Duration          int     `json:"duration"`
+	ETA               int     `json:"eta"`
+	Delegation        int     `json:"delegation"`
+	Details           Details `json:"details"`
 }
 
-type EndpointDetail struct {
-	HostStartTime       int64                 `json:"hostStartTime"`
-	Key                 EndpointKey           `json:"key"`
-	Cert                EndpointCert          `json:"cert"`
-	Chain               EndpointChain         `json:"chain"`
-	Protocols           []EndpointProto       `json:"protocols"`
-	Suites              EndpointSuites        `json:"suites"`
-	ServerSignature     string                `json:"serverSignature"`
-	PrefixDelegation    bool                  `json:"prefixDelegation"`
-	NonPrefixDelegation bool                  `json:"nonPrefixDelegation"`
-	VulnBeast           bool                  `json:"vulnBeast"`
-	RenegSupport        int                   `json:"renegSupport"`
-	StsStatus           string                `json:"stsStatus"`
-	StsResponseHeader   string                `json:"stsResponseHeader"`
-	StsMaxAge           int                   `json:"stsMaxAge"`
-	StsSubdomains       bool                  `json:"stsSubdomains"`
-	StsPreload          bool                  `json:"stsPreload"`
-	SessionResumption   int                   `json:"sessionResumption"`
-	CompressionMethods  int                   `json:"compressionMethods"`
-	SupportsNpn         bool                  `json:"supportsNpn"`
-	SupportsAlpn        bool                  `json:"supportsAlpn"`
-	SessionTickets      int                   `json:"sessionTickets"`
-	OcspStapling        bool                  `json:"ocspStapling"`
-	SniRequired         bool                  `json:"sniRequired"`
-	HTTPStatusCode      int                   `json:"httpStatusCode"`
-	SupportsRc4         bool                  `json:"supportsRc4"`
-	Rc4WithModern       bool                  `json:"rc4WithModern"`
-	Rc4Only             bool                  `json:"rc4Only"`
-	ForwardSecrecy      int                   `json:"forwardSecrecy"`
-	ProtocolIntolerance int                   `json:"protocolIntolerance"`
-	MiscIntolerance     int                   `json:"miscIntolerance"`
-	Sims                EndpointSims          `json:"sims"`
-	Heartbleed          bool                  `json:"heartbleed"`
-	Heartbeat           bool                  `json:"heartbeat"`
-	OpenSslCcs          int                   `json:"openSslCcs"`
-	OpenSSLLuckyMinus20 int                   `json:"openSSLLuckyMinus20"`
-	Poodle              bool                  `json:"poodle"`
-	PoodleTls           int                   `json:"poodleTls"`
-	FallbackScsv        bool                  `json:"fallbackScsv"`
-	Freak               bool                  `json:"freak"`
-	HasSct              int                   `json:"hasSct"`
-	DhPrimes            []string              `json:"dhPrimes"`
-	DhUsesKnownPrimes   int                   `json:"dhUsesKnownPrimes"`
-	DhYsReuse           bool                  `json:"dhYsReuse"`
-	Logjam              bool                  `json:"logjam"`
-	ChaCha20Preference  bool                  `json:"chaCha20Preference"`
-	HstsPolicy          EndpointHstsPolicy    `json:"hstsPolicy"`
-	HstsPreloads        []EndpointHstsPreload `json:"hstsPreloads"`
-	HpkpPolicy          EndpointHpkpPolicy    `json:"hpkpPolicy"`
-	HpkpRoPolicy        EndpointHpkpPolicy    `json:"hpkpRoPolicy"`
+type Details struct {
+	HostStartTime       int64         `json:"hostStartTime"`
+	Key                 Key           `json:"key"`
+	Cert                Cert          `json:"cert"`
+	Chain               Chain         `json:"chain"`
+	Protocols           []Protocols   `json:"protocols"`
+	Suites              Suites        `json:"suites"`
+	ServerSignature     string        `json:"serverSignature"`
+	PrefixDelegation    bool          `json:"prefixDelegation"`
+	NonPrefixDelegation bool          `json:"nonPrefixDelegation"`
+	VulnBeast           bool          `json:"vulnBeast"`
+	RenegSupport        int           `json:"renegSupport"`
+	StsStatus           string        `json:"stsStatus"`
+	StsResponseHeader   string        `json:"stsResponseHeader"`
+	StsMaxAge           int           `json:"stsMaxAge"`
+	StsSubdomains       bool          `json:"stsSubdomains"`
+	StsPreload          bool          `json:"stsPreload"`
+	SessionResumption   int           `json:"sessionResumption"`
+	CompressionMethods  int           `json:"compressionMethods"`
+	SupportsNpn         bool          `json:"supportsNpn"`
+	SupportsAlpn        bool          `json:"supportsAlpn"`
+	SessionTickets      int           `json:"sessionTickets"`
+	OcspStapling        bool          `json:"ocspStapling"`
+	SniRequired         bool          `json:"sniRequired"`
+	HTTPStatusCode      int           `json:"httpStatusCode"`
+	SupportsRc4         bool          `json:"supportsRc4"`
+	Rc4WithModern       bool          `json:"rc4WithModern"`
+	Rc4Only             bool          `json:"rc4Only"`
+	ForwardSecrecy      int           `json:"forwardSecrecy"`
+	ProtocolIntolerance int           `json:"protocolIntolerance"`
+	MiscIntolerance     int           `json:"miscIntolerance"`
+	Sims                Sims          `json:"sims"`
+	Heartbleed          bool          `json:"heartbleed"`
+	Heartbeat           bool          `json:"heartbeat"`
+	OpenSslCcs          int           `json:"openSslCcs"`
+	OpenSSLLuckyMinus20 int           `json:"openSSLLuckyMinus20"`
+	Poodle              bool          `json:"poodle"`
+	PoodleTls           int           `json:"poodleTls"`
+	FallbackScsv        bool          `json:"fallbackScsv"`
+	Freak               bool          `json:"freak"`
+	HasSct              int           `json:"hasSct"`
+	DhPrimes            []string      `json:"dhPrimes"`
+	DhUsesKnownPrimes   int           `json:"dhUsesKnownPrimes"`
+	DhYsReuse           bool          `json:"dhYsReuse"`
+	Logjam              bool          `json:"logjam"`
+	ChaCha20Preference  bool          `json:"chaCha20Preference"`
+	HstsPolicy          HstsPolicy    `json:"hstsPolicy"`
+	HstsPreloads        []HstsPreload `json:"hstsPreloads"`
+	HpkpPolicy          HpkpPolicy    `json:"hpkpPolicy"`
+	HpkpRoPolicy        HpkpPolicy    `json:"hpkpRoPolicy"`
 }
 
-type EndpointKey struct {
+type Key struct {
 	Size       int    `json:"size"`
 	Alg        string `json:"alg"`
 	DebianFlaw bool   `json:"debianFlaw"`
 	Strength   int    `json:"strength"`
 }
 
-type EndpointCert struct {
+type Cert struct {
 	Subject              string   `json:"subject"`
 	CommonNames          []string `json:"commonNames"`
 	AltNames             []string `json:"altNames"`
@@ -96,12 +96,12 @@ type EndpointCert struct {
 	PinSha256            string   `json:"pinSha256"`
 }
 
-type EndpointChain struct {
-	Certs  []EndpointChainCert `json:"certs"`
-	Issues int                 `json:"issues"`
+type Chain struct {
+	Certs  []ChainCert `json:"certs"`
+	Issues int         `json:"issues"`
 }
 
-type EndpointChainCert struct {
+type ChainCert struct {
 	Subject              string `json:"subject"`
 	Label                string `json:"label"`
 	NotBefore            int64  `json:"notBefore"`
@@ -121,18 +121,18 @@ type EndpointChainCert struct {
 	Raw                  string `json:"raw"`
 }
 
-type EndpointProto struct {
+type Protocols struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
 
-type EndpointSuites struct {
-	List       []EndpointSuite `json:"list"`
-	Preference bool            `json:"preference"`
+type Suites struct {
+	List       []Suite `json:"list"`
+	Preference bool    `json:"preference"`
 }
 
-type EndpointSuite struct {
+type Suite struct {
 	ID             int    `json:"id"`
 	Name           string `json:"name"`
 	CipherStrength int    `json:"cipherStrength"`
@@ -144,20 +144,20 @@ type EndpointSuite struct {
 	DhYs           int    `json:"dhYs,omitempty"`
 }
 
-type EndpointSims struct {
-	Results []EndpointSimResult `json:"results"`
+type Sims struct {
+	Results []SimResult `json:"results"`
 }
 
-type EndpointSimResult struct {
-	Client     map[string]interface{} `json:"client"`
-	ErrorCode  int                    `json:"errorCode"`
-	Attempts   int                    `json:"attempts"`
-	ProtocolId int                    `json:"protocolId,omitempty"`
-	SuiteId    int                    `json:"suiteId,omitempty"`
-	KxInfo     string                 `json:"kxInfo,omitempty"`
+type SimResult struct {
+	Client     map[string]any `json:"client"`
+	ErrorCode  int            `json:"errorCode"`
+	Attempts   int            `json:"attempts"`
+	ProtocolId int            `json:"protocolId,omitempty"`
+	SuiteId    int            `json:"suiteId,omitempty"`
+	KxInfo     string         `json:"kxInfo,omitempty"`
 }
 
-type EndpointHstsPolicy struct {
+type HstsPolicy struct {
 	LongMaxAge int               `json:"LONG_MAX_AGE"`
 	Header     string            `json:"header"`
 	Status     string            `json:"status"`
@@ -165,14 +165,14 @@ type EndpointHstsPolicy struct {
 	Directives map[string]string `json:"directives"`
 }
 
-type EndpointHstsPreload struct {
+type HstsPreload struct {
 	Source     string `json:"source"`
 	Hostname   string `json:"hostname"`
 	Status     string `json:"status"`
 	SourceTime int64  `json:"sourceTime"`
 }
 
-type EndpointHpkpPolicy struct {
+type HpkpPolicy struct {
 	Status      string        `json:"status"`
 	Pins        []string      `json:"pins"`
 	MatchedPins []string      `json:"matchedPins"`
