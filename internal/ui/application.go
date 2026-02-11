@@ -104,6 +104,8 @@ func (app *Application) initUIComponents() {
 		AddButton("Send", nil).
 		SetHorizontal(true).
 		SetFieldStyle(tcell.StyleDefault.Background(utils.ColorPrimary)).
+		SetButtonBackgroundColor(utils.ColorPrimary).
+		SetLabelColor(utils.ColorText).
 		SetItemPadding(2).
 		SetBorderPadding(0, 0, 0, 0)
 

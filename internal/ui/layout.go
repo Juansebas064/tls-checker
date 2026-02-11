@@ -25,10 +25,11 @@ func (app *Application) buildLayout() {
 
 	// Details
 	detailsFrame := tview.NewFrame(app.detailsSection)
-	detailsFrame.AddText("Details (Ctrl + d)", true, tview.AlignCenter, utils.ColorPrimary).
+	detailsFrame.AddText("Details (Ctrl + d)", true, tview.AlignLeft, utils.ColorPrimary).
 	AddText(fmt.Sprintln("Previous (p)"), false, tview.AlignLeft, utils.ColorText).
 	AddText(fmt.Sprintln("Next (n)"), false, tview.AlignRight, utils.ColorText).
-		SetBorders(0, 0, 1, 0, 1, 1).
+	AddText(fmt.Sprintln("Down (j)    Up (k)"), false, tview.AlignCenter, utils.ColorText).
+	SetBorders(0, 0, 1, 1, 1, 1).
 		SetBorder(true)
 
 	// Search

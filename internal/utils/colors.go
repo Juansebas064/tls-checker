@@ -15,6 +15,7 @@ var (
 	ColorWarning = tcell.ColorYellow
 	ColorError   = tcell.ColorRed
 	ColorLabel   = tcell.ColorNames["cadetblue"]
+	ColorBorder  = tcell.ColorDarkGray
 )
 
 // Colors for details output
@@ -55,4 +56,3 @@ func suiteStrengthColor(bits int) string {
 		return fmt.Sprintf("[%s]", TagError)
 	}
 }
-
