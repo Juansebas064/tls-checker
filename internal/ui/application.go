@@ -1,27 +1,12 @@
 package ui
 
 import (
+	"tls-checker/internal/model"
+	"tls-checker/internal/utils"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"tls-checker/internal/model"
 )
-
-// Constants
-const (
-	colorPrimary = "primary"
-	colorText    = "text"
-	colorOk      = "ok"
-	colorWarning = "warning"
-	colorError   = "error"
-)
-
-var colors = map[string]tcell.Color{
-	"primary": tcell.Color63,
-	"text":    tcell.ColorWhite,
-	"ok":      tcell.Color100,
-	"warning": tcell.Color100,
-	"error":   tcell.Color100,
-}
 
 type Application struct {
 	// Global state for visited hosts and endpoints
@@ -87,6 +72,7 @@ func (app *Application) initUIComponents() {
 
 	// Details section
 	app.detailsSection = tview.NewTextView()
+	app.detailsSection.SetDynamicColors(true)
 	app.detailsSection.SetText("Write a host address and hit send to begin")
 
 	// Search section
@@ -94,7 +80,7 @@ func (app *Application) initUIComponents() {
 	app.hostField = tview.NewInputField().
 		SetFieldWidth(25).
 		SetPlaceholder("www.example.com").
-		SetPlaceholderStyle(tcell.StyleDefault.Background(colors[colorPrimary]).Dim(true))
+		SetPlaceholderStyle(tcell.StyleDefault.Background(utils.ColorPrimary).Dim(true))
 
 	// Flags
 	app.startNewCheck = tview.NewCheckbox().SetLabel("Start new")
@@ -104,7 +90,7 @@ func (app *Application) initUIComponents() {
 		SetLabel("Max age").
 		SetFieldWidth(4).
 		SetPlaceholder("0").
-		SetPlaceholderStyle(tcell.StyleDefault.Background(colors[colorPrimary]).Dim(true))
+		SetPlaceholderStyle(tcell.StyleDefault.Background(utils.ColorPrimary).Dim(true))
 	app.ignoreMismatchCheck = tview.NewCheckbox().SetLabel("Ignore mismatch")
 
 	// Search form
@@ -117,7 +103,7 @@ func (app *Application) initUIComponents() {
 		AddFormItem(app.ignoreMismatchCheck).
 		AddButton("Send", nil).
 		SetHorizontal(true).
-		SetFieldStyle(tcell.StyleDefault.Background(colors[colorPrimary])).
+		SetFieldStyle(tcell.StyleDefault.Background(utils.ColorPrimary)).
 		SetItemPadding(2).
 		SetBorderPadding(0, 0, 0, 0)
 
@@ -134,10 +120,10 @@ func (app *Application) queueUpdateDraw(function func()) {
 }
 
 // Show messages to the user
-func (app *Application) showMessage(message string, colorStatus string) {
+func (app *Application) showMessage(message string, color tcell.Color) {
 	app.queueUpdateDraw(func() {
 		app.messagesSection.Clear()
-		app.messagesSection.SetTextColor(colors[colorStatus])
+		app.messagesSection.SetTextColor(color)
 		app.messagesSection.SetText(message)
 	})
 }

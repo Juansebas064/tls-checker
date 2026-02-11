@@ -1,10 +1,10 @@
 package ui
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 	"tls-checker/internal/api"
+	"tls-checker/internal/utils"
 )
 
 // Call api.analyzeHost(analyzeHostQuery) with the given host name and add it to []visitedHosts if it was not present. Call app.hostChanged(hostIndex) at the end.
@@ -16,11 +16,11 @@ func (app *Application) searchHost(host string) {
 			app.hostChanged(indexSlice[0])
 		} else {
 			// Make the request
-			app.showMessage("Starting API request", colorText)
+			app.showMessage("Starting API request", utils.ColorText)
 			res, err := api.AnalyzeHost(app.getAnalyzeHostQuery(false))
 
 			if err != nil {
-				app.showMessage(err.Error(), colorError)
+				app.showMessage(err.Error(), utils.ColorError)
 				return
 			}
 
@@ -34,10 +34,10 @@ func (app *Application) searchHost(host string) {
 				time.Sleep(10 * time.Second)
 
 				res, err = api.AnalyzeHost(app.getAnalyzeHostQuery(true))
-				app.showMessage(fmt.Sprintf("Retrying for %d time, status: %s", i, res.Status), "text")
+				app.showMessage(fmt.Sprintf("Retrying for %d time, status: %s", i, res.Status), utils.ColorText)
 
 				if err != nil {
-					app.showMessage(err.Error(), colorError)
+					app.showMessage(err.Error(), utils.ColorError)
 					return
 				}
 			}
@@ -45,7 +45,7 @@ func (app *Application) searchHost(host string) {
 			// Add host to visited hosts
 			app.visitedHosts = append(app.visitedHosts, res)
 			app.hostsSection.AddItem(host, "", 0, nil)
-			app.showMessage("API request completed", colorText)
+			app.showMessage("API request completed", utils.ColorText)
 			app.hostChanged(len(app.visitedHosts) - 1)
 		}
 		app.tui.SetFocus(app.detailsSection)
@@ -54,7 +54,7 @@ func (app *Application) searchHost(host string) {
 
 // Change focus and the contents of endpointsSection when adding/navigating to another host in the list
 func (app *Application) hostChanged(hostIndex int) {
-	app.showMessage(fmt.Sprintf("Showing data from host \"%s\"", app.visitedHosts[hostIndex].Host), colorText)
+	app.showMessage(fmt.Sprintf("Showing data from host \"%s\"", app.visitedHosts[hostIndex].Host), utils.ColorText)
 
 	// TODO: Verify if host isn't already in focus
 	// if hostAlreadyOnFocus := app.hostsSection.
@@ -79,12 +79,13 @@ func (app *Application) hostChanged(hostIndex int) {
 func (app *Application) endpointChanged(endpointIndex int) {
 	// Identify active host
 	hostIndex := app.hostsSection.GetCurrentItem()
-	text, _ := json.MarshalIndent(app.visitedHosts[hostIndex].Endpoints[endpointIndex], "", "\t")
+	endpoint := app.visitedHosts[hostIndex].Endpoints[endpointIndex]
+	formatted := utils.FormatEndpoint(&endpoint)
 
 	// Draw new endpoint details
 	app.queueUpdateDraw(func() {
 		app.endpointsSection.SetCurrentItem(endpointIndex)
 		app.detailsSection.ScrollToBeginning()
-		app.detailsSection.SetText(string(text))
+		app.detailsSection.SetText(formatted)
 	})
 }
