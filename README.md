@@ -79,9 +79,9 @@ Simply run the application:
 | `Ctrl + h` | Focus on Hosts section |
 | `Ctrl + e` | Focus on Endpoints section |
 | `Ctrl + d` | Focus on Details section |
-| `Ctrl + s` | Focus on Search / Send query |
-| `p` | Previous certificate (in details view) |
-| `n` | Next certificate (in details view) |
+| `Ctrl + s` | Focus on Search |
+| `p` | Previous endpoint (in details view) |
+| `n` | Next endpoint (in details view) |
 | `j` / `↓` | Navigate down in lists |
 | `k` / `↑` | Navigate up in lists |
 | `Tab` | Navigate between form fields |
